@@ -40,7 +40,7 @@ class _HomePage extends State<HomePage>{
                       height: hei*0.33,
                       alignment: Alignment.centerLeft,
                       child: Text(ansVal != '' ? ansVal : 'Answer', style: TextStyle(
-                        fontSize: font == false ? 26 : 40,
+                        fontSize: font == false ? 35 : 45,
                         color: Colors.white
                       ))
                     ),
@@ -107,6 +107,7 @@ class _HomePage extends State<HomePage>{
   cButton(){
     setState((){
       questVal = '';
+      ansVal = '';
     });
   }
   equalBtn(){
