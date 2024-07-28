@@ -19,32 +19,8 @@ List char = [
 class _HomePage extends State<HomePage>{
   var ansVal = '';
   var questVal = '';
-  quest(val){
-    setState((){
-      questVal += val;
-    });
-  }
-  delFunc(){
-    setState((){
-      questVal = questVal.substring(0, questVal.length-1);
-    });
-  }
-  cButton(){
-    setState((){
-      questVal = '';
-    });
-  }
-  equalBtn(){
-    String finalQuest = questVal;
-    finalQuest = finalQuest.replaceAll('x', '*');
+  bool font = false;
 
-    Parser p = Parser();
-    Expression exp = p.parse(finalQuest);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-
-    ansVal = eval.toString();
-  }
   @override
   Widget build(BuildContext context){
     final hei = MediaQuery.of(context).size.width;
@@ -64,7 +40,7 @@ class _HomePage extends State<HomePage>{
                       height: hei*0.33,
                       alignment: Alignment.centerLeft,
                       child: Text(ansVal != '' ? ansVal : 'Answer', style: TextStyle(
-                        fontSize: 26,
+                        fontSize: font == false ? 26 : 40,
                         color: Colors.white
                       ))
                     ),
@@ -107,7 +83,7 @@ class _HomePage extends State<HomePage>{
                     }else if(char[index].toString() == '='){
                       return Buttons(name: char[index].toString(), func: equalBtn, bgClr: Colors.blue.shade500);
                     }else if(char[index].toString() == 'ANS'){
-                      return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.purple);
+                      return Buttons(name: char[index].toString(), func: ansButton, bgClr: Colors.purple);
                     } else{
                       return Buttons(name: char[index].toString(), func: quest);
                     }
@@ -117,5 +93,40 @@ class _HomePage extends State<HomePage>{
         )
       )
     );
+  }
+  quest(val){
+    setState((){
+      questVal += val;
+    });
+  }
+  delFunc(){
+    setState((){
+      questVal = questVal.substring(0, questVal.length-1);
+    });
+  }
+  cButton(){
+    setState((){
+      questVal = '';
+    });
+  }
+  equalBtn(){
+    String finalQuest = questVal;
+    finalQuest = finalQuest.replaceAll('x', '*');
+
+    Parser p = Parser();
+    Expression exp = p.parse(finalQuest);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+    setState((){
+      ansVal = eval.toString();
+      font = false;
+    });
+  }
+  ansButton(){
+    setState((){
+      questVal = '';
+      font = true;
+    });
   }
 }
