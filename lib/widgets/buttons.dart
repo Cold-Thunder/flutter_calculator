@@ -16,7 +16,11 @@ class Buttons extends StatelessWidget{
         child: SizedBox.expand(
         child: InkWell(
         onTap: (){
-          func(name);
+          if(name == 'DEL' || name == 'C' || name == '=' || name == 'ANS'){
+            func();
+          }else{
+            func(name);
+          }
         },
             splashColor: Colors.red,
         child: Container(

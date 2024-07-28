@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:calculator/widgets/buttons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 class HomePage extends StatefulWidget{
   @override
@@ -16,9 +17,33 @@ List char = [
   '%',0,'.', 'ANS'
 ];
 class _HomePage extends State<HomePage>{
-
+  var ansVal = '';
+  var questVal = '';
   quest(val){
-    print(val);
+    setState((){
+      questVal += val;
+    });
+  }
+  delFunc(){
+    setState((){
+      questVal = questVal.substring(0, questVal.length-1);
+    });
+  }
+  cButton(){
+    setState((){
+      questVal = '';
+    });
+  }
+  equalBtn(){
+    String finalQuest = questVal;
+    finalQuest = finalQuest.replaceAll('x', '*');
+
+    Parser p = Parser();
+    Expression exp = p.parse(finalQuest);
+    ContextModel cm = ContextModel();
+    double eval = exp.evaluate(EvaluationType.REAL, cm);
+
+    ansVal = eval.toString();
   }
   @override
   Widget build(BuildContext context){
@@ -30,14 +55,15 @@ class _HomePage extends State<HomePage>{
             Expanded(
               flex: 1,
               child: Container(
-                color: Colors.blue,
+                color: Colors.grey,
                 child: Column(
                   children: [
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(10),
                       height: hei*0.33,
-                      child: Text('Answer', style: TextStyle(
+                      alignment: Alignment.centerLeft,
+                      child: Text(ansVal != '' ? ansVal : 'Answer', style: TextStyle(
                         fontSize: 26,
                         color: Colors.white
                       ))
@@ -45,12 +71,15 @@ class _HomePage extends State<HomePage>{
                     Container(
                       width: double.infinity,
                       height: hei*0.33,
-                      padding: EdgeInsets.all(3),
-                      color: Colors.red,
-                      child: Text('Question', style: TextStyle(
+                      padding: EdgeInsets.all(10),
+                      alignment: Alignment.centerRight,
+                      child: Text(questVal != '' ? questVal : 'Question', style: TextStyle(
                         fontSize: 26,
-                        color: Colors.white
-                      ))
+                        color: Colors.white,
+                      ),
+                        textDirection: TextDirection.ltr,
+                        maxLines: 1
+                      ),
                     )
                   ]
                 )
@@ -69,14 +98,14 @@ class _HomePage extends State<HomePage>{
                   itemCount: char.length,
                   itemBuilder: (context, index){
                     if(char[index].toString() == 'C'){
-                      return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.green);
-                    }else if(char[index].toString() == 'DEL'){
-                      return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.red);
+                      return Buttons(name: char[index].toString(), func: cButton, bgClr: Colors.green);
+                    }else if(char[index] == 'DEL'){
+                      return Buttons(name: char[index].toString(), func: delFunc, bgClr: Colors.red);
                     }
                     else if(char[index].toString() == '+' || char[index].toString() == '-' || char[index].toString() == 'x' || char[index].toString() == '/'){
-                      return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.grey.shade500);
-                    }else if(char[index].toString() == '='){
                       return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.blue.shade500);
+                    }else if(char[index].toString() == '='){
+                      return Buttons(name: char[index].toString(), func: equalBtn, bgClr: Colors.blue.shade500);
                     }else if(char[index].toString() == 'ANS'){
                       return Buttons(name: char[index].toString(), func: quest, bgClr: Colors.purple);
                     } else{
